@@ -5,19 +5,57 @@ function Home() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState('');
+  const [contactStatus, setContactStatus] = useState('');
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    alert('Newsletter signup coming soon!');
-    setEmail('');
+    setNewsletterStatus('sending');
+    
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'form-name': 'newsletter',
+        email: email,
+      }).toString(),
+    })
+      .then(() => {
+        setNewsletterStatus('success');
+        setEmail('');
+        setTimeout(() => setNewsletterStatus(''), 3000);
+      })
+      .catch(() => {
+        setNewsletterStatus('error');
+        setTimeout(() => setNewsletterStatus(''), 3000);
+      });
   };
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
-    alert('Contact form coming soon!');
-    setName('');
-    setEmail('');
-    setMessage('');
+    setContactStatus('sending');
+    
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'form-name': 'contact',
+        name: name,
+        email: email,
+        message: message,
+      }).toString(),
+    })
+      .then(() => {
+        setContactStatus('success');
+        setName('');
+        setEmail('');
+        setMessage('');
+        setTimeout(() => setContactStatus(''), 3000);
+      })
+      .catch(() => {
+        setContactStatus('error');
+        setTimeout(() => setContactStatus(''), 3000);
+      });
   };
 
   return (
@@ -165,7 +203,7 @@ function Home() {
             <p className="newsletter-description">
               Get AI workflows, creator insights, and experiment updates delivered to your inbox.
             </p>
-            <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
+            <form className="newsletter-form" onSubmit={handleNewsletterSubmit} name="newsletter">
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -174,9 +212,11 @@ function Home() {
                 required
                 className="newsletter-input"
               />
-              <button type="submit" className="btn-primary">
-                Subscribe
+              <button type="submit" className="btn-primary" disabled={newsletterStatus === 'sending'}>
+                {newsletterStatus === 'sending' ? 'Subscribing...' : 'Subscribe'}
               </button>
+              {newsletterStatus === 'success' && <p className="status-success">✓ Check your email!</p>}
+              {newsletterStatus === 'error' && <p className="status-error">✗ Something went wrong. Try again!</p>}
             </form>
           </div>
         </div>
@@ -189,7 +229,7 @@ function Home() {
           <p className="section-description">
             Questions? Collaboration ideas? Let's connect.
           </p>
-          <form className="contact-form" onSubmit={handleContactSubmit}>
+          <form className="contact-form" onSubmit={handleContactSubmit} name="contact">
             <input
               type="text"
               placeholder="Your Name"
@@ -214,9 +254,11 @@ function Home() {
               className="contact-textarea"
               rows="5"
             />
-            <button type="submit" className="btn-primary">
-              Send Message
+            <button type="submit" className="btn-primary" disabled={contactStatus === 'sending'}>
+              {contactStatus === 'sending' ? 'Sending...' : 'Send Message'}
             </button>
+            {contactStatus === 'success' && <p className="status-success">✓ Message sent! I'll get back to you soon.</p>}
+            {contactStatus === 'error' && <p className="status-error">✗ Something went wrong. Try again!</p>}
           </form>
         </div>
       </section>
