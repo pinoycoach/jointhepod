@@ -1,3 +1,21 @@
+.status-success {
+  color: #00F5A0;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-error {
+  color: #ff6b6b;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap');
 
 :root {
