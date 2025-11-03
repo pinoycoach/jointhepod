@@ -8,54 +8,61 @@ function Home() {
   const [newsletterStatus, setNewsletterStatus] = useState('');
   const [contactStatus, setContactStatus] = useState('');
 
-  const handleNewsletterSubmit = (e) => {
+  const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     setNewsletterStatus('sending');
     
-    fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        'form-name': 'newsletter',
-        email: email,
-      }).toString(),
-    })
-      .then(() => {
+    try {
+      const response = await fetch('https://formspree.io/f/xdkprlaw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      
+      if (response.ok) {
         setNewsletterStatus('success');
         setEmail('');
-        setTimeout(() => setNewsletterStatus(''), 3000);
-      })
-      .catch(() => {
+        setTimeout(() => setNewsletterStatus(''), 4000);
+      } else {
         setNewsletterStatus('error');
-        setTimeout(() => setNewsletterStatus(''), 3000);
-      });
+        setTimeout(() => setNewsletterStatus(''), 4000);
+      }
+    } catch (error) {
+      setNewsletterStatus('error');
+      setTimeout(() => setNewsletterStatus(''), 4000);
+    }
   };
 
-  const handleContactSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     setContactStatus('sending');
     
-    fetch('/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        'form-name': 'contact',
-        name: name,
-        email: email,
-        message: message,
-      }).toString(),
-    })
-      .then(() => {
+    try {
+      const response = await fetch('https://formspree.io/f/xdkprlaw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          message,
+          _subject: `New contact message from ${name}`,
+        }),
+      });
+      
+      if (response.ok) {
         setContactStatus('success');
         setName('');
         setEmail('');
         setMessage('');
-        setTimeout(() => setContactStatus(''), 3000);
-      })
-      .catch(() => {
+        setTimeout(() => setContactStatus(''), 4000);
+      } else {
         setContactStatus('error');
-        setTimeout(() => setContactStatus(''), 3000);
-      });
+        setTimeout(() => setContactStatus(''), 4000);
+      }
+    } catch (error) {
+      setContactStatus('error');
+      setTimeout(() => setContactStatus(''), 4000);
+    }
   };
 
   return (
@@ -203,7 +210,7 @@ function Home() {
             <p className="newsletter-description">
               Get AI workflows, creator insights, and experiment updates delivered to your inbox.
             </p>
-            <form className="newsletter-form" onSubmit={handleNewsletterSubmit} name="newsletter">
+            <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -229,7 +236,7 @@ function Home() {
           <p className="section-description">
             Questions? Collaboration ideas? Let's connect.
           </p>
-          <form className="contact-form" onSubmit={handleContactSubmit} name="contact">
+          <form className="contact-form" onSubmit={handleContactSubmit}>
             <input
               type="text"
               placeholder="Your Name"
